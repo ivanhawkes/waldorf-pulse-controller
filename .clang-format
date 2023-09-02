@@ -1,0 +1,19 @@
+---
+BasedOnStyle: Microsoft
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortBlocksOnASingleLine: 'true'
+AllowShortCaseLabelsOnASingleLine: 'true'
+BinPackArguments: 'true'
+BinPackParameters: 'true'
+BreakBeforeBraces: Allman
+ColumnLimit: '120'
+ContinuationIndentWidth: '4'
+DisableFormat: 'false'
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+Standard: Cpp11
+TabWidth: '4'
+UseTab: ForIndentation
+MaxEmptyLinesToKeep: '2'
+
+...

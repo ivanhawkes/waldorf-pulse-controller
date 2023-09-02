@@ -1,0 +1,5 @@
+# VS Code bloat.
+/.vscode/
+
+# Build files.
+/build
