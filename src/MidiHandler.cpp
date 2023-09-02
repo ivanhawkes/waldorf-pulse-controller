@@ -27,135 +27,135 @@ int OnJackProcess(jack_nframes_t noOfFrames, void *arg)
 	// Clear the output each process cycle.
 	jack_midi_clear_buffer(outputBuffer);
 
-//	jack_midi_data_t *writeBuffer1 = jack_midi_event_reserve(outputBuffer, 0, 3);
-//	writeBuffer1[0] = 0xB0; // CC
-//	writeBuffer1[1] = 0x32; // 50
-//	writeBuffer1[2] = controlValue;
+	jack_midi_data_t *writeBuffer1 = jack_midi_event_reserve(outputBuffer, 0, 3);
+	writeBuffer1[0] = 0xB0; // CC
+	writeBuffer1[1] = 0x32; // 50
+	writeBuffer1[2] = controlValue;
 
-//	jack_midi_data_t *writeBuffer2 = jack_midi_event_reserve(outputBuffer, 1, 3);
-//	writeBuffer2[0] = 0xB0; // CC
-//	writeBuffer2[1] = 0x34; // 52
-//	writeBuffer2[2] = controlValue;
+	jack_midi_data_t *writeBuffer2 = jack_midi_event_reserve(outputBuffer, 1, 3);
+	writeBuffer2[0] = 0xB0; // CC
+	writeBuffer2[1] = 0x34; // 52
+	writeBuffer2[2] = controlValue;
 
-//	jack_midi_data_t *writeBuffer3 = jack_midi_event_reserve(outputBuffer, 2, 3);
-//	writeBuffer3[0] = 0xB0; // CC
-//	writeBuffer3[1] = 0x37; // 55
-//	writeBuffer3[2] = controlValue;
+	jack_midi_data_t *writeBuffer3 = jack_midi_event_reserve(outputBuffer, 2, 3);
+	writeBuffer3[0] = 0xB0; // CC
+	writeBuffer3[1] = 0x37; // 55
+	writeBuffer3[2] = controlValue;
 
-//	jack_midi_data_t *writeBuffer4 = jack_midi_event_reserve(outputBuffer, 3, 3);
-//	writeBuffer4[0] = 0xB0; // CC
-//	writeBuffer4[1] = 0x38; // 56
-//	writeBuffer4[2] = controlValue;
+	jack_midi_data_t *writeBuffer4 = jack_midi_event_reserve(outputBuffer, 3, 3);
+	writeBuffer4[0] = 0xB0; // CC
+	writeBuffer4[1] = 0x38; // 56
+	writeBuffer4[2] = controlValue;
 
-//	// Get number of events, and process them.
-//	jack_nframes_t inputEventCount = jack_midi_get_event_count(inputBuffer);
-//	if (inputEventCount > 0)
-//	{
-//		// Rapidly cycle up and down.
-//		// TODO: Use a timer to slow this down.
-//		controlValue += controlValueChange;
-//		if (controlValue >= 127)
-//		{
-//			controlValueChange = -1;
-//		}
-//		if (controlValue <= 0)
-//		{
-//			controlValueChange = 1;
-//		}
+	// Get number of events, and process them.
+	jack_nframes_t inputEventCount = jack_midi_get_event_count(inputBuffer);
+	if (inputEventCount > 0)
+	{
+		// Rapidly cycle up and down.
+		// TODO: Use a timer to slow this down.
+		controlValue += controlValueChange;
+		if (controlValue >= 127)
+		{
+			controlValueChange = -1;
+		}
+		if (controlValue <= 0)
+		{
+			controlValueChange = 1;
+		}
 
-//		for (jack_nframes_t i = 0; i < inputEventCount; i++)
-//		{
-//			jack_midi_event_t *event;
+		for (jack_nframes_t i = 0; i < inputEventCount; i++)
+		{
+			jack_midi_event_t event;
 
-//			int success = jack_midi_event_get(event, inputBuffer, i);
-//			if (success == 0)
-//			{
-//				// Ignore 0xF8 - seems to be a keep-alive from the Triton.
-//				if (event->buffer[0] != 0xF8)
-//				{
-//					if (event->size == 1)
-//					{
-//						printf("Midi Event: BYTES %lu [%0X]\n", event->size, event->buffer[0]);
-//					}
-//					else if (event->size == 2)
-//					{
-//						printf("Midi Event: BYTES %lu [%0X][%0X]\n", event->size, event->buffer[0], event->buffer[1]);
-//					}
-//					else if (event->size == 3)
-//					{
-//						// printf("Midi Event: BYTES %lu [%0X][%0X][%0X]\n", event->size, event->buffer[0],
-//						// event->buffer[1], event->buffer[2]);
-//					}
-//					else
-//					{
-//						printf(
-//						    "Midi Event: BYTES %lu [%0X][%0X][%0X]...\n", event->size, event->buffer[0],
-//						    event->buffer[1], event->buffer[2]);
-//					}
+			int success = jack_midi_event_get(&event, inputBuffer, i);
+			if (success == 0)
+			{
+				// Ignore 0xF8 - seems to be a keep-alive from the Triton.
+				if (event.buffer[0] != 0xF8)
+				{
+					if (event.size == 1)
+					{
+						printf("Midi Event: BYTES %lu [%0X]\n", event.size, event.buffer[0]);
+					}
+					else if (event.size == 2)
+					{
+						printf("Midi Event: BYTES %lu [%0X][%0X]\n", event.size, event.buffer[0], event.buffer[1]);
+					}
+					else if (event.size == 3)
+					{
+						// printf("Midi Event: BYTES %lu [%0X][%0X][%0X]\n", event.size, event.buffer[0],
+						// event.buffer[1], event.buffer[2]);
+					}
+					else
+					{
+						printf(
+							"Midi Event: BYTES %lu [%0X][%0X][%0X]...\n", event.size, event.buffer[0],
+							event.buffer[1], event.buffer[2]);
+					}
 
-//					// Let's examine the first byte to determine the message type.
-//					jack_midi_data_t firstByte = event->buffer[0];
-//					jack_midi_data_t channel = firstByte & 0x0F;
-//					jack_midi_data_t messageType = (firstByte >> 4) & 0x07;
+					// Let's examine the first byte to determine the message type.
+					jack_midi_data_t firstByte = event.buffer[0];
+					jack_midi_data_t channel = firstByte & 0x0F;
+					jack_midi_data_t messageType = (firstByte >> 4) & 0x07;
 
-//					switch (messageType)
-//					{
-//						case 0:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Note Off:        Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+					switch (messageType)
+					{
+						case 0:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Note Off:        Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 1:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Note On:         Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 1:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Note On:         Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 2:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    P. Aftertouch:   Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 2:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    P. Aftertouch:   Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 3:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Control Change:  Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 3:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Control Change:  Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 4:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Program Change:  Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 4:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Program Change:  Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 5:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    C. Aftertouch:   Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 5:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    C. Aftertouch:   Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						case 6:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Pitch Wheel:     Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
+						case 6:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Pitch Wheel:     Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
 
-//						default:
-//							printf(
-//							    "Time: [%0X]    Msg: [%0X]    Unknown:         Chan: [%0X]    Data: [%0X][%0X]\n",
-//							    noOfFrames, event->buffer[0], channel, event->buffer[1], event->buffer[2]);
-//							break;
-//					}
-//				}
-//			}
-//			else
-//			{
-//				printf("Midi Event Failure! %i\n", success);
-//			}
-//		}
-//	}
+						default:
+							printf(
+								"Time: [%0X]    Msg: [%0X]    Unknown:         Chan: [%0X]    Data: [%0X][%0X]\n",
+								noOfFrames, event.buffer[0], channel, event.buffer[1], event.buffer[2]);
+							break;
+					}
+				}
+			}
+			else
+			{
+				printf("Midi Event Failure! %i\n", success);
+			}
+		}
+	}
 
 	return 0;
 }
